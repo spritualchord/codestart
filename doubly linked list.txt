@@ -1,0 +1,120 @@
+#include <iostream>
+
+using namespace std;
+
+template <typename T>
+class Node {
+public:
+    T data;
+    Node* next;
+    Node* prev;
+
+    Node(T value) : data(value), next(nullptr), prev(nullptr) {}
+};
+
+template <typename T>
+class DoublyLinkedList {
+private:
+    Node<T>* head;
+    Node<T>* tail;
+
+public:
+    DoublyLinkedList() : head(nullptr), tail(nullptr) {}
+
+    // Function to insert an element at the beginning of the list
+    void insertAtBeginning(T value) {
+        Node<T>* newNode = new Node<T>(value);
+
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+    }
+
+    // Function to insert an element at the end of the list
+    void insertAtEnd(T value) {
+        Node<T>* newNode = new Node<T>(value);
+
+        if (tail == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    // Function to remove an element from the beginning of the list
+    void removeFromBeginning() {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node<T>* temp = head;
+
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            head->prev = nullptr;
+        }
+
+        delete temp;
+    }
+
+    // Function to remove an element from the end of the list
+    void removeFromEnd() {
+        if (tail == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node<T>* temp = tail;
+
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
+
+        delete temp;
+    }
+
+    // Function to display the elements of the list
+    void display() {
+        Node<T>* current = head;
+
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+
+        cout << endl;
+    }
+};
+
+int main() {
+    DoublyLinkedList<int> myList;
+
+    myList.insertAtBeginning(3);
+    myList.insertAtBeginning(2);
+    myList.insertAtBeginning(1);
+
+    myList.display(); // Output: 1 2 3
+
+    myList.insertAtEnd(4);
+    myList.display(); // Output: 1 2 3 4
+
+    myList.removeFromBeginning();
+    myList.display(); // Output: 2 3 4
+
+    myList.removeFromEnd();
+    myList.display(); // Output: 2 3
+
+    return 0;
+}

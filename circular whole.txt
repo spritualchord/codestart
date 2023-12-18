@@ -1,0 +1,311 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+class CircularLinkedList {
+private:
+    Node* head;
+
+public:
+    CircularLinkedList() : head(nullptr) {}
+
+    ~CircularLinkedList() {
+        if (head == nullptr) return;
+
+        Node* current = head->next;
+        while (current != head) {
+            Node* temp = current;
+            current = current->next;
+            delete temp;
+        }
+        delete head;
+    }
+
+    // (i) Insert an element x at the front of the circularly linked list
+    void insertAtFront(int value) {
+        Node* newNode = new Node(value);
+        if (head == nullptr) {
+            head = newNode;
+            head->next = head;
+        } else {
+            newNode->next = head->next;
+            head->next = newNode;
+        }
+    }
+
+    // (ii) Insert an element x after an element y in the circularly linked list
+    void insertAfter(int valueToInsert, int valueAfter) {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* current = head;
+        do {
+            if (current->data == valueAfter) {
+                Node* newNode = new Node(valueToInsert);
+                newNode->next = current->next;
+                current->next = newNode;
+                return;
+            }
+            current = current->next;
+        } while (current != head);
+
+        cout << "Element " << valueAfter << " not found in the list\n";
+    }
+
+    // (iii) Insert an element x at the back of the circularly linked list
+    void insertAtBack(int value) {
+        Node* newNode = new Node(value);
+        if (head == nullptr) {
+            head = newNode;
+            head->next = head;
+        } else {
+            newNode->next = head->next;
+            head->next = newNode;
+            head = newNode;
+        }
+    }
+
+   // (iv) Remove an element from the back of the circularly linked list
+void removeFromBack() {
+    if (head == nullptr) {
+        cout << "List is empty\n";
+        return;
+    }
+
+    Node* current = head;
+    Node* prev = nullptr;
+
+    while (current->next != head) {
+        prev = current;
+        current = current->next;
+    }
+
+    if (current == head) {
+        delete head;
+        head = nullptr;
+    } else {
+        prev->next = current->next;
+        delete current;
+        head = prev; // Update head to the new last node
+    }
+}
+
+
+    // (v) Remove an element from the front of the circularly linked list
+    void removeFromFront() {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* temp = head->next;
+        if (temp == head) {
+            delete head;
+            head = nullptr;
+        } else {
+            head->next = temp->next;
+            delete temp;
+        }
+    }
+
+    // (vi) Remove the element x from the circularly linked list
+    void removeFromList(int value) {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* current = head;
+        Node* prev = nullptr;
+
+        do {
+            if (current->data == value) {
+                if (current == head) {
+                    head = current->next;
+                }
+
+                if (prev != nullptr) {
+                    prev->next = current->next;
+                }
+
+                delete current;
+                return;
+            }
+
+            prev = current;
+            current = current->next;
+        } while (current != head);
+
+        cout << "Element " << value << " not found in the list\n";
+    }
+
+    // (vii) Search for an element x in the circularly linked list and return its pointer
+    Node* search(int value) {
+        if (head == nullptr) {
+            return nullptr;
+        }
+
+        Node* current = head;
+        do {
+            if (current->data == value) {
+                return current;
+            }
+            current = current->next;
+        } while (current != head);
+
+        return nullptr;
+    }
+
+    // (viii) Concatenate two circularly linked lists
+    void concatenate(CircularLinkedList& otherList) {
+        if (otherList.head == nullptr) {
+            return;
+        }
+
+        if (head == nullptr) {
+            head = otherList.head;
+        } else {
+            Node* current = head;
+            while (current->next != head) {
+                current = current->next;
+            }
+
+            current->next = otherList.head->next;
+            otherList.head->next = head;
+            head = otherList.head;
+            otherList.head = nullptr; // Disconnect the other list
+        }
+    }
+
+    // (ix) Reverse a list
+    void reverse() {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* prev = nullptr;
+        Node* current = head;
+        Node* next = nullptr;
+
+        do {
+            next = current->next;
+            current->next = prev;
+            prev = current;
+            current = next;
+        } while (current != head);
+
+        head = prev;
+    }
+
+    // (x) Display
+    void display() {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* current = head;
+        do {
+            cout << current->data << " ";
+            current = current->next;
+        } while (current != head);
+
+        cout << endl;
+    }
+
+    // (xi) Count the nodes in the list
+    int countNodes() {
+        if (head == nullptr) {
+            return 0;
+        }
+
+        int count = 0;
+        Node* current = head;
+        do {
+            count++;
+            current = current->next;
+        } while (current != head);
+
+        return count;
+    }
+
+    // (xii) Remove an element with value x from the list
+    void removeWithValue(int value) {
+        removeFromList(value);
+    }
+};
+
+int main() {
+    CircularLinkedList myList;
+
+    // (i) Insert an element x at the front of the circularly linked list
+    myList.insertAtFront(10);
+    
+    // (i) Insert an element x at the front of the circularly linked list
+    myList.insertAtFront(20);
+    
+    // (iii) Insert an element x at the back of the circularly linked list
+    myList.insertAtBack(30);
+    
+    // (ii) Insert an element x after an element y in the circularly linked list
+    myList.insertAfter(25, 20);
+
+    // (x) Display
+    cout << "Original List: ";
+    myList.display();
+
+    // Creating another list for concatenation
+    CircularLinkedList otherList;
+
+    // (iii) Insert an element x at the back of the circularly linked list
+    otherList.insertAtBack(40);
+    
+    // (iii) Insert an element x at the back of the circularly linked list
+    otherList.insertAtBack(50);
+
+    // (x) Display
+    cout << "Other List: ";
+    otherList.display();
+
+    // (viii) Concatenate two circularly linked lists
+    myList.concatenate(otherList);
+
+    // (x) Display
+    cout << "Concatenated List: ";
+    myList.display();
+
+    // (ix) Reverse a list
+    cout << "Reversed List: ";
+    myList.reverse();
+    myList.display();
+
+    // (xi) Count the nodes in the list
+    cout << "Number of Nodes: " << myList.countNodes() << endl;
+
+    // (v) Remove an element from the front of the circularly linked list
+    myList.removeFromFront();
+    cout << "After removing from front: ";
+    myList.display();
+
+    // (iv) Remove an element from the back of the circularly linked list
+    myList.removeFromBack();
+    cout << "After removing from back: ";
+    myList.display();
+
+    // (xii) Remove an element with value x from the list
+    myList.removeFromList(25);
+    cout << "After removing 25: ";
+    myList.display();
+
+    return 0;
+}

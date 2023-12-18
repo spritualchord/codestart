@@ -1,0 +1,159 @@
+#include <iostream>
+#include <cassert>
+using namespace std;
+
+const int MAX_SIZE = 100; 
+
+template <typename T>
+class ArrayStack {
+private:
+    T* data;
+    int top; 
+    int capacity; 
+
+public:
+    
+    ArrayStack(int size = MAX_SIZE) {
+        capacity = size;
+        data = new T[capacity];
+        top = -1;
+    }
+
+    
+    ~ArrayStack() {
+        delete[] data;
+    }
+
+    
+    ArrayStack(const ArrayStack<T>& other) {
+        capacity = other.capacity;
+        data = new T[capacity];
+        top = other.top;
+
+        for (int i = 0; i <= top; ++i) {
+            data[i] = other.data[i];
+        }
+    }
+
+
+    ArrayStack<T>& operator=(const ArrayStack<T>& other) {
+        if (this == &other) {
+            return *this; 
+        }
+
+        delete[] data; 
+        
+        capacity = other.capacity;
+        data = new T[capacity];
+        top = other.top;
+
+        for (int i = 0; i <= top; ++i) {
+            data[i] = other.data[i];
+        }
+
+        return *this;
+    }
+
+    
+    void push(const T& value) {
+        if (top == capacity - 1) {
+            cout << "Stack overflow! Cannot push more elements." << endl;
+            return;
+        }
+        data[++top] = value;
+    }
+
+    
+    void pop() {
+        if (isEmpty()) {
+            cout << "Stack is empty! Cannot pop." << endl;
+            return;
+        }
+        --top;
+    }
+
+    
+    T topElement() const {
+        assert(!isEmpty());
+        return data[top];
+    }
+
+    bool isEmpty() const {
+        return top == -1;
+    }
+
+    
+    void clear() {
+        top = -1;
+    }
+
+    
+    void display() const {
+        if (isEmpty()) {
+            cout << "Stack is empty." << endl;
+            return;
+        }
+
+        cout << "Stack elements (from top to bottom): ";
+        for (int i = top; i >= 0; --i) {
+            cout << data[i] << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    int choice;
+    ArrayStack<int> stack;
+
+    do {
+        cout << "\nStack Menu:" << endl;
+        cout << "1. Push" << endl;
+        cout << "2. Pop" << endl;
+        cout << "3. Top" << endl;
+        cout << "4. Is Empty" << endl;
+        cout << "5. Clear" << endl;
+        cout << "6. Display" << endl;
+        cout << "0. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                int value;
+                cout << "Enter the value to push: ";
+                cin >> value;
+                stack.push(value);
+                break;
+            }
+            case 2:
+                stack.pop();
+                break;
+            case 3:
+                if (!stack.isEmpty()) {
+                   cout << "Top element: " << stack.topElement() << endl;
+                } else {
+                   cout << "Stack is empty. Cannot get top element." << endl;
+                    }
+                break;
+
+            case 4:
+                cout << "Stack is " << (stack.isEmpty() ? "empty." : "not empty.") << endl;
+                break;
+            case 5:
+                stack.clear();
+                cout << "Stack is cleared." << endl;
+                break;
+            case 6:
+                stack.display();
+                break;
+            case 0:
+                cout << "Exiting program." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 0);
+
+    return 0;
+}

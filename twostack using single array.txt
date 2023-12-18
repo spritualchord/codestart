@@ -1,0 +1,103 @@
+#include <iostream>
+#include <climits>
+
+using namespace std;
+
+class TwoStacks {
+private:
+    int* array;
+    int size;
+    int top1;
+    int top2;
+
+public:
+    TwoStacks(int n) {
+        size = n;
+        array = new int[n];
+        top1 = -1;
+        top2 = size;
+    }
+
+    ~TwoStacks() {
+        delete[] array;
+    }
+
+    void push1(int x) {
+        if (top1 < top2 - 1) {
+            array[++top1] = x;
+        } else {
+            cout << "Stack 1 overflow" << endl;
+        }
+    }
+
+    void push2(int x) {
+        if (top1 < top2 - 1) {
+            array[--top2] = x;
+        } else {
+            cout << "Stack 2 overflow" << endl;
+        }
+    }
+
+    int pop1() {
+        if (top1 >= 0) {
+            return array[top1--];
+        } else {
+            cout << "Stack 1 underflow" << endl;
+            return INT_MIN;
+        }
+    }
+
+    int pop2() {
+        if (top2 < size) {
+            return array[top2++];
+        } else {
+            cout << "Stack 2 underflow" << endl;
+            return INT_MIN;
+        }
+    }
+
+    void display1() {
+        if (top1 >= 0) {
+            cout << "Stack 1 elements: ";
+            for (int i = 0; i <= top1; ++i) {
+                cout << array[i] << " ";
+            }
+            cout << endl;
+        } else {
+            cout << "Stack 1 is empty" << endl;
+        }
+    }
+
+    void display2() {
+        if (top2 < size) {
+            cout << "Stack 2 elements: ";
+            for (int i = size - 1; i >= top2; --i) {
+                cout << array[i] << " ";
+            }
+            cout << endl;
+        } else {
+            cout << "Stack 2 is empty" << endl;
+        }
+    }
+};
+
+int main() {
+    TwoStacks twoStacks(5);
+
+    twoStacks.push1(1);
+    twoStacks.push1(2);
+    twoStacks.push2(3);
+    twoStacks.push2(4);
+    twoStacks.push1(5);
+
+    twoStacks.display1(); // Output: Stack 1 elements: 1 2 5
+    twoStacks.display2(); // Output: Stack 2 elements: 4 3
+
+    cout << "Popped from stack 1: " << twoStacks.pop1() << endl; // Output: Popped from stack 1: 5
+    cout << "Popped from stack 2: " << twoStacks.pop2() << endl; // Output: Popped from stack 2: 4
+
+    twoStacks.display1(); // Output: Stack 1 elements: 1 2
+    twoStacks.display2(); // Output: Stack 2 elements: 3
+
+    return 0;
+}

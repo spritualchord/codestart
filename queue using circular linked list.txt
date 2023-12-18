@@ -1,0 +1,93 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+class CircularQueue {
+private:
+    Node* front;
+    Node* rear;
+
+public:
+    CircularQueue() : front(nullptr), rear(nullptr) {}
+
+    bool isEmpty() {
+        return (front == nullptr && rear == nullptr);
+    }
+
+    void enqueue(int x) {
+        Node* newNode = new Node(x);
+
+        if (isEmpty()) {
+            front = rear = newNode;
+            rear->next = front; // Make the list circular
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+            rear->next = front; // Make the list circular
+        }
+    }
+
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "Empty queue" << endl;
+            return;
+        }
+
+        if (front == rear) {
+            delete front;
+            front = rear = nullptr;
+        } else {
+            Node* temp = front;
+            front = front->next;
+            rear->next = front; // Adjust rear's next to maintain circular structure
+
+            delete temp;
+        }
+    }
+
+    int peek() {
+        if (isEmpty()) {
+            cout << "Empty queue" << endl;
+            return -1; // Returning a default value; you may want to handle this differently based on your use case.
+        }
+
+        return front->data;
+    }
+
+    ~CircularQueue() {
+        // Delete all nodes in the circular linked list
+        while (!isEmpty()) {
+            dequeue();
+        }
+    }
+};
+
+int main() {
+    CircularQueue cq;
+
+    cq.enqueue(1);
+    cq.enqueue(2);
+    cq.enqueue(3);
+    cq.enqueue(4);
+
+    cout << "Front element: " << cq.peek() << endl;
+
+    cq.dequeue();
+    cout << "After dequeue, front element: " << cq.peek() << endl;
+
+    cq.dequeue();
+    cout << "After dequeue, front element: " << cq.peek() << endl;
+
+    cq.enqueue(5);
+    cq.enqueue(6);
+    cout << "After enqueuing 5 and 6, front element: " << cq.peek() << endl;
+
+    return 0;
+}

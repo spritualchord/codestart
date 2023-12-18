@@ -1,0 +1,306 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* prev;
+    Node* next;
+
+    Node(int value) : data(value), prev(nullptr), next(nullptr) {}
+};
+
+class DoublyLinkedList {
+private:
+    Node* head;
+    Node* tail;
+
+public:
+    DoublyLinkedList() : head(nullptr), tail(nullptr) {}
+
+    // (i) Insert an element x at the beginning of the doubly linked list
+    void insertAtBeginning(int value) {
+        Node* newNode = new Node(value);
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+    }
+
+    // (ii) Insert an element x at position ith in the doubly linked list
+    void insertAtPosition(int value, int position) {
+        Node* newNode = new Node(value);
+        if (position <= 0) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        if (head == nullptr && position == 1) {
+            head = tail = newNode;
+            return;
+        }
+
+        Node* current = head;
+        for (int i = 1; i < position - 1 && current != nullptr; ++i) {
+            current = current->next;
+        }
+
+        if (current == nullptr) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        newNode->next = current->next;
+        newNode->prev = current;
+        if (current->next != nullptr) {
+            current->next->prev = newNode;
+        }
+        current->next = newNode;
+
+        if (newNode->next == nullptr) {
+            tail = newNode;
+        }
+    }
+
+    // (iii) Insert an element x at the end of the doubly linked list
+    void insertAtEnd(int value) {
+        Node* newNode = new Node(value);
+        if (tail == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    // (iv) Remove an element from the beginning of the doubly linked list
+    void removeFromBeginning() {
+        if (head == nullptr) {
+            cout << "The list is empty\n";
+            return;
+        }
+
+        Node* temp = head;
+        head = head->next;
+        if (head != nullptr) {
+            head->prev = nullptr;
+        } else {
+            tail = nullptr;
+        }
+
+        delete temp;
+    }
+
+    // (v) Remove an element from ith position in the doubly linked list.
+    void removeFromPosition(int position) {
+        if (position <= 0 || head == nullptr) {
+            cout << "Invalid position or the list is empty\n";
+            return;
+        }
+
+        Node* current = head;
+        for (int i = 1; i < position && current != nullptr; ++i) {
+            current = current->next;
+        }
+
+        if (current == nullptr) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        if (current->prev != nullptr) {
+            current->prev->next = current->next;
+        } else {
+            head = current->next;
+        }
+
+        if (current->next != nullptr) {
+            current->next->prev = current->prev;
+        } else {
+            tail = current->prev;
+        }
+
+        delete current;
+    }
+
+    // (vi) Remove an element from the end of the doubly linked list
+    void removeFromEnd() {
+        if (tail == nullptr) {
+            cout << "The list is empty\n";
+            return;
+        }
+
+        Node* temp = tail;
+        tail = tail->prev;
+        if (tail != nullptr) {
+            tail->next = nullptr;
+        } else {
+            head = nullptr;
+        }
+
+        delete temp;
+    }
+
+    // (vii) Search for an element x in the doubly linked list and return its pointer
+    Node* search(int value) {
+        Node* current = head;
+        while (current != nullptr) {
+            if (current->data == value) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr;
+    }
+
+    // (viii) Concatenate two doubly linked lists
+    void concatenate(DoublyLinkedList& otherList) {
+        if (otherList.head != nullptr) {
+            if (head == nullptr) {
+                head = otherList.head;
+            } else {
+                tail->next = otherList.head;
+                otherList.head->prev = tail;
+            }
+            tail = otherList.tail;
+        }
+        otherList.head = otherList.tail = nullptr; // Disconnect the other list
+    }
+
+    // (ix) Remove an element with a specific value
+    void removeWithValue(int value) {
+        Node* nodeToRemove = search(value);
+        if (nodeToRemove != nullptr) {
+            if (nodeToRemove->prev != nullptr) {
+                nodeToRemove->prev->next = nodeToRemove->next;
+            } else {
+                head = nodeToRemove->next;
+            }
+
+            if (nodeToRemove->next != nullptr) {
+                nodeToRemove->next->prev = nodeToRemove->prev;
+            } else {
+                tail = nodeToRemove->prev;
+            }
+
+            delete nodeToRemove;
+        } else {
+            cout << "Element not found\n";
+        }
+    }
+
+    // (x) Display the linked list
+    void display() {
+        Node* current = head;
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+
+    // (xi) Reverse the list
+    void reverse() {
+        Node* current = head;
+        Node* temp = nullptr;
+
+        while (current != nullptr) {
+            temp = current->prev;
+            current->prev = current->next;
+            current->next = temp;
+            current = current->prev;
+        }
+
+        if (temp != nullptr) {
+            head = temp->prev;
+        }
+    }
+};
+
+int main() {
+    DoublyLinkedList list;
+
+    // Insert at the beginning
+    list.insertAtBeginning(10);
+    list.insertAtBeginning(20);
+    list.insertAtBeginning(30);
+
+    // Display the list
+    cout << "List after insertion at the beginning: ";
+    list.display();
+
+    // Insert at position 2
+    list.insertAtPosition(25, 2);
+
+    // Display the list
+    cout << "List after insertion at position 2: ";
+    list.display();
+
+    // Insert at the end
+    list.insertAtEnd(40);
+
+    // Display the list
+    cout << "List after insertion at the end: ";
+    list.display();
+
+    // Remove from the beginning
+    list.removeFromBeginning();
+
+    // Display the list
+    cout << "List after removal from the beginning: ";
+    list.display();
+
+    // Remove from position 2
+    list.removeFromPosition(2);
+
+    // Display the list
+    cout << "List after removal from position 2: ";
+    list.display();
+
+    // Remove from the end
+    list.removeFromEnd();
+
+    // Display the list
+    cout << "List after removal from the end: ";
+    list.display();
+
+    // Search for an element
+    int searchValue = 20;
+    Node* searchResult = list.search(searchValue);
+    if (searchResult != nullptr) {
+        cout << "Element " << searchValue << " found at address: " << searchResult << endl;
+    } else {
+        cout << "Element " << searchValue << " not found\n";
+    }
+
+    // Concatenate two lists
+    DoublyLinkedList secondList;
+    secondList.insertAtEnd(50);
+    secondList.insertAtEnd(60);
+    list.concatenate(secondList);
+
+    // Display the concatenated list
+    cout << "Concatenated list: ";
+    list.display();
+
+    // Remove element with a specific value
+    int valueToRemove = 30;
+    list.removeWithValue(valueToRemove);
+
+    // Display the list after removal
+    cout << "List after removing element with value " << valueToRemove << ": ";
+    list.display();
+
+    // Reverse the list
+    list.reverse();
+
+    // Display the reversed list
+    cout << "Reversed list: ";
+    list.display();
+
+    return 0;
+}

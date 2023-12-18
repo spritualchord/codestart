@@ -1,0 +1,129 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+    Node* prev;
+
+    Node(int value) : data(value), next(nullptr), prev(nullptr) {}
+};
+
+class Deque {
+private:
+    Node* front;
+    Node* rear;
+
+public:
+    Deque() : front(nullptr), rear(nullptr) {}
+
+    bool isEmpty() {
+        return (front == nullptr && rear == nullptr);
+    }
+
+    void enqueueFront(int x) {
+        Node* newNode = new Node(x);
+
+        if (isEmpty()) {
+            front = rear = newNode;
+        } else {
+            newNode->next = front;
+            front->prev = newNode;
+            front = newNode;
+        }
+    }
+
+    void enqueueRear(int x) {
+        Node* newNode = new Node(x);
+
+        if (isEmpty()) {
+            front = rear = newNode;
+        } else {
+            newNode->prev = rear;
+            rear->next = newNode;
+            rear = newNode;
+        }
+    }
+
+    void dequeueFront() {
+        if (isEmpty()) {
+            cout << "Empty deque. Cannot dequeue from front." << endl;
+            return;
+        }
+
+        Node* temp = front;
+        front = front->next;
+
+        if (front != nullptr) {
+            front->prev = nullptr;
+        } else {
+            rear = nullptr; // Adjust rear when dequeuing the last element
+        }
+
+        delete temp;
+    }
+
+    void dequeueRear() {
+        if (isEmpty()) {
+            cout << "Empty deque. Cannot dequeue from rear." << endl;
+            return;
+        }
+
+        Node* temp = rear;
+        rear = rear->prev;
+
+        if (rear != nullptr) {
+            rear->next = nullptr;
+        } else {
+            front = nullptr; // Adjust front when dequeuing the last element
+        }
+
+        delete temp;
+    }
+
+    int getFront() {
+        if (isEmpty()) {
+            cout << "Empty deque. Cannot get front element." << endl;
+            return -1; // Returning a default value; you may want to handle this differently based on your use case.
+        }
+
+        return front->data;
+    }
+
+    int getRear() {
+        if (isEmpty()) {
+            cout << "Empty deque. Cannot get rear element." << endl;
+            return -1; // Returning a default value; you may want to handle this differently based on your use case.
+        }
+
+        return rear->data;
+    }
+
+    ~Deque() {
+        // Delete all nodes in the doubly linked list
+        while (!isEmpty()) {
+            dequeueFront();
+        }
+    }
+};
+
+int main() {
+    Deque dq;
+
+    dq.enqueueFront(1);
+    dq.enqueueFront(2);
+    dq.enqueueRear(3);
+    dq.enqueueRear(4);
+
+    cout << "Front element: " << dq.getFront() << endl;
+    cout << "Rear element: " << dq.getRear() << endl;
+
+    dq.dequeueFront();
+    cout << "After dequeue from front, front element: " << dq.getFront() << endl;
+
+    dq.dequeueRear();
+    cout << "After dequeue from rear, rear element: " << dq.getRear() << endl;
+
+    return 0;
+}

@@ -1,0 +1,327 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+class SinglyLinkedList {
+private:
+    Node* head;
+
+public:
+    SinglyLinkedList() : head(nullptr) {}
+
+    ~SinglyLinkedList() {
+        Node* current = head;
+        while (current != nullptr) {
+            Node* next = current->next;
+            delete current;
+            current = next;
+        }
+    }
+
+    // (i) Insert an element x at the beginning of the linked list
+    void insertAtBeginning(int value) {
+        Node* newNode = new Node(value);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // (ii) Insert an element x at position ith in the linked list
+    void insertAtPosition(int value, int position) {
+        Node* newNode = new Node(value);
+        if (position <= 0) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        if (position == 1) {
+            newNode->next = head;
+            head = newNode;
+            return;
+        }
+
+        Node* current = head;
+        for (int i = 1; i < position - 1 && current != nullptr; ++i) {
+            current = current->next;
+        }
+
+        if (current == nullptr) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+
+    // (iii) Insert an element x at the end of the linked list
+    void insertAtEnd(int value) {
+        Node* newNode = new Node(value);
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+
+        Node* current = head;
+        while (current->next != nullptr) {
+            current = current->next;
+        }
+
+        current->next = newNode;
+    }
+
+    // (iv) Remove an element from the beginning of the linked list
+    void removeFromBeginning() {
+        if (head == nullptr) {
+            cout << "The list is empty\n";
+            return;
+        }
+
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    // (v) Remove an element from ith position in the linked list.
+    void removeFromPosition(int position) {
+        if (position <= 0 || head == nullptr) {
+            cout << "Invalid position or the list is empty\n";
+            return;
+        }
+
+        if (position == 1) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+
+        Node* current = head;
+        for (int i = 1; i < position - 1 && current != nullptr; ++i) {
+            current = current->next;
+        }
+
+        if (current == nullptr || current->next == nullptr) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        Node* temp = current->next;
+        current->next = current->next->next;
+        delete temp;
+    }
+
+    // (vi) Remove an element from the end of the linked list
+    void removeFromEnd() {
+        if (head == nullptr) {
+            cout << "The list is empty\n";
+            return;
+        }
+
+        if (head->next == nullptr) {
+            delete head;
+            head = nullptr;
+            return;
+        }
+
+        Node* current = head;
+        while (current->next->next != nullptr) {
+            current = current->next;
+        }
+
+        delete current->next;
+        current->next = nullptr;
+    }
+
+    // (vii) Search for an element x in the linked list and return its pointer
+    Node* search(int value) {
+        Node* current = head;
+        while (current != nullptr) {
+            if (current->data == value) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr;
+    }
+
+    // (viii) Concatenate two linked lists
+    void concatenate(SinglyLinkedList& otherList) {
+        if (head == nullptr) {
+            head = otherList.head;
+        } else {
+            Node* current = head;
+            while (current->next != nullptr) {
+                current = current->next;
+            }
+            current->next = otherList.head;
+        }
+        otherList.head = nullptr; // Disconnect the other list
+    }
+
+    // (ix) Remove an element with a specific value
+    void removeWithValue(int value) {
+        if (head == nullptr) {
+            cout << "The list is empty\n";
+            return;
+        }
+
+        if (head->data == value) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+
+        Node* current = head;
+        while (current->next != nullptr && current->next->data != value) {
+            current = current->next;
+        }
+
+        if (current->next == nullptr) {
+            cout << "Element not found\n";
+            return;
+        }
+
+        Node* temp = current->next;
+        current->next = current->next->next;
+        delete temp;
+    }
+
+    // (x) Display the linked list
+    void display() {
+        if (head == nullptr) {
+            cout << "The list is empty\n";
+            return;
+        }
+
+        Node* current = head;
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+
+    // (xi) Reverse the list
+    void reverse() {
+        Node* prev = nullptr;
+        Node* current = head;
+        Node* next = nullptr;
+
+        while (current != nullptr) {
+            next = current->next;
+            current->next = prev;
+            prev = current;
+            current = next;
+        }
+
+        head = prev;
+    }
+
+    // (xii) Count the number of elements in the linked list
+    int countElements() {
+        int count = 0;
+        Node* current = head;
+        while (current != nullptr) {
+            count++;
+            current = current->next;
+        }
+        return count;
+    }
+};
+
+int main() {
+    {
+    SinglyLinkedList list;
+
+    // Insert at the beginning
+    list.insertAtBeginning(10);
+    list.insertAtBeginning(20);
+    list.insertAtBeginning(30);
+
+    // Display the list
+    cout << "List after insertion at the beginning: ";
+    list.display();
+
+    // Insert at position 2
+    list.insertAtPosition(25, 2);
+
+    // Display the list
+    cout << "List after insertion at position 2: ";
+    list.display();
+
+    // Insert at the end
+    list.insertAtEnd(40);
+
+    // Display the list
+    cout << "List after insertion at the end: ";
+    list.display();
+
+    // Remove from the beginning
+    list.removeFromBeginning();
+
+    // Display the list
+    cout << "List after removal from the beginning: ";
+    list.display();
+
+    // Remove from position 2
+    list.removeFromPosition(2);
+
+    // Display the list
+    cout << "List after removal from position 2: ";
+    list.display();
+
+    // Remove from the end
+    list.removeFromEnd();
+
+    // Display the list
+    cout << "List after removal from the end: ";
+    list.display();
+
+    // Search for an element
+    int searchValue = 20;
+    Node* searchResult = list.search(searchValue);
+    if (searchResult != nullptr) {
+        cout << "Element " << searchValue << " found at address: " << searchResult << endl;
+    } else {
+        cout << "Element " << searchValue << " not found\n";
+    }
+
+    // Concatenate two lists
+    SinglyLinkedList secondList;
+    secondList.insertAtEnd(50);
+    secondList.insertAtEnd(60);
+    list.concatenate(secondList);
+
+    // Display the concatenated list
+    cout << "Concatenated list: ";
+    list.display();
+
+    // Remove element with a specific value
+    int valueToRemove = 30;
+    list.removeWithValue(valueToRemove);
+
+    // Display the list after removal
+    cout << "List after removing element with value " << valueToRemove << ": ";
+    list.display();
+
+    // Reverse the list
+    list.reverse();
+
+    // Display the reversed list
+    cout << "Reversed list: ";
+    list.display();
+
+    // Count the number of elements
+    cout << "Number of elements in the list: " << list.countElements() << endl;
+
+    return 0;
+}
+}

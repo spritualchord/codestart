@@ -1,0 +1,73 @@
+#include <iostream>
+#include <stack>
+#include <sstream>
+#include <cctype>
+#include <cmath>
+
+using namespace std;
+
+// Function to check if a character is an operator
+bool isOperator(char c) {
+    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '%');
+}
+
+// Function to evaluate a postfix expression
+int evaluatePostfixExpression(const string& expression) {
+    stack<int> operandStack;
+
+    // Iterate through the expression
+    for (char currentChar : expression) {
+        // If current character is an operand, push it onto the stack
+        if (isdigit(currentChar)) {
+            operandStack.push(currentChar - '0'); // Convert char to int
+        } else if (isOperator(currentChar)) {
+            // If current character is an operator, pop two operands from the stack,
+            // perform the operation, and push the result back onto the stack
+            int operand2 = operandStack.top();
+            operandStack.pop();
+
+            int operand1 = operandStack.top();
+            operandStack.pop();
+
+            switch (currentChar) {
+                case '+':
+                    operandStack.push(operand1 + operand2);
+                    break;
+                case '-':
+                    operandStack.push(operand1 - operand2);
+                    break;
+                case '*':
+                    operandStack.push(operand1 * operand2);
+                    break;
+                case '/':
+                    operandStack.push(operand1 / operand2);
+                    break;
+                case '^':
+                    operandStack.push(pow(operand1, operand2));
+                    break;
+                case '%':
+                    operandStack.push(operand1 % operand2);
+                    break;
+                // Add more cases as needed
+            }
+        }
+    }
+
+    // The final result should be at the top of the stack
+    return operandStack.top();
+}
+
+int main() {
+    // Example postfix expression: 5 4 * 7 3 % +
+    string postfixExpression;
+    cout << "Enter a postfix expression (operands and operators separated by space): ";
+    getline(cin, postfixExpression);
+
+    // Evaluate the postfix expression
+    int result = evaluatePostfixExpression(postfixExpression);
+
+    // Display the result
+    cout << "Result: " << result << endl;
+
+    return 0;
+}

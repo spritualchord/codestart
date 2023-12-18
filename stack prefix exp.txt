@@ -1,0 +1,75 @@
+#include <iostream>
+#include <stack>
+#include <sstream>
+#include <cctype>
+#include <cmath> // Include cmath for pow function
+
+using namespace std;
+
+// Function to check if a character is an operator
+bool isOperator(char c) {
+    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '%');
+}
+
+// Function to evaluate a prefix expression
+int evaluatePrefixExpression(const string& expression) {
+    stack<int> operandStack;
+
+    // Iterate through the expression in reverse order
+    for (int i = expression.size() - 1; i >= 0; --i) {
+        char currentChar = expression[i];
+
+        // If current character is an operand, push it onto the stack
+        if (isdigit(currentChar)) {
+            operandStack.push(currentChar - '0'); // Convert char to int
+        } else if (isOperator(currentChar)) {
+            // If current character is an operator, pop two operands from the stack,
+            // perform the operation, and push the result back onto the stack
+            int operand1 = operandStack.top();
+            operandStack.pop();
+
+            int operand2 = operandStack.top();
+            operandStack.pop();
+
+            switch (currentChar) {
+                case '+':
+                    operandStack.push(operand1 + operand2);
+                    break;
+                case '-':
+                    operandStack.push(operand1 - operand2);
+                    break;
+                case '*':
+                    operandStack.push(operand1 * operand2);
+                    break;
+                case '/':
+                    operandStack.push(operand1 / operand2);
+                    break;
+                case '^':
+                    operandStack.push(pow(operand1, operand2));
+                    break;
+                case '%':
+                    operandStack.push(operand1 % operand2);
+                    break;
+                // Add more cases as needed
+            }
+        }
+    }
+
+    // The final result should be at the top of the stack
+    return operandStack.top();
+}
+
+int main() {
+    // Example prefix expression: + * 5 4 % 7 3
+    string prefixExpression;
+    cout << "Enter a prefix expression: ";
+    getline(cin, prefixExpression);
+
+    // Evaluate the prefix expression
+    int result = evaluatePrefixExpression(prefixExpression);
+
+    // Display the result
+    cout << "Result: " << result << endl;
+
+    return 0;
+}

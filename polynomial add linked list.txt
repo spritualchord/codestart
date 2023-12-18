@@ -1,0 +1,163 @@
+#include <iostream>
+
+using namespace std;
+
+template <class T>
+class Node
+{
+public:
+    T coff;
+    T exponent;
+    Node<T> *next;
+
+    Node(T el, T el1, Node<T> *ptr = nullptr) : coff(el), exponent(el1), next(ptr) {}
+};
+
+template <class T>
+class Polynomial
+{
+private:
+    Node<T> *head;
+    Node<T> *tail;
+
+public:
+    Polynomial() : head(nullptr), tail(nullptr) {}
+
+    ~Polynomial()
+    {
+        Node<T> *current = head;
+        while (current != nullptr)
+        {
+            Node<T> *next = current->next;
+            delete current;
+            current = next;
+        }
+        head = tail = nullptr;
+    }
+
+    void addToTail(T el, T el1)
+    {
+        if (head == nullptr)
+        {
+            head = new Node<T>(el, el1);
+            tail = head;
+            return;
+        }
+
+        Node<T> *p = head;
+        while (p->next != nullptr)
+        {
+            p = p->next;
+        }
+
+        p->next = new Node<T>(el, el1);
+        tail = p->next;
+    }
+
+    void display()
+{
+    Node<T> *p = head;
+    while (p != nullptr)
+    {
+        cout << p->coff;
+        if (p->exponent > 0)
+        {
+            cout << "x^" << p->exponent;
+        }
+        if (p->next != nullptr && p->next->coff > 0)
+        {
+            cout << " + ";
+        }
+        else if (p->next != nullptr)
+        {
+            cout << " ";
+        }
+        p = p->next;
+    }
+    cout << endl;
+}
+
+    Polynomial<int> addition(Polynomial p2)
+    {
+        Polynomial<int> ans;
+        Node<T> *p = head;
+        Node<T> *q = p2.head;
+
+        while (p != nullptr && q != nullptr)
+        {
+            if (p->exponent == q->exponent)
+            {
+                int sum = p->coff + q->coff;
+                ans.addToTail(sum, p->exponent);
+                p = p->next;
+                q = q->next;
+            }
+            else if (p->exponent > q->exponent)
+            {
+                ans.addToTail(p->coff, p->exponent);
+                p = p->next;
+            }
+            else if (q->exponent > p->exponent)
+            {
+                ans.addToTail(q->coff, q->exponent);
+                q = q->next;
+            }
+        }
+
+        while (p != nullptr)
+        {
+            ans.addToTail(p->coff, p->exponent);
+            p = p->next;
+        }
+
+        while (q != nullptr)
+        {
+            ans.addToTail(q->coff, q->exponent);
+            q = q->next;
+        }
+
+        return ans;
+    }
+};
+
+int main()
+{
+    Polynomial<int> p1;
+    int num_val;
+    cout << "Enter the number of terms for the 1st polynomial: ";
+    cin >> num_val;
+
+    for (int i = 0; i < num_val; i++)
+    {
+        int coeff, exp;
+        cout << "Enter coefficient for term " << i + 1 << ": ";
+        cin >> coeff;
+        cout << "Enter exponent for term " << i + 1 << ": ";
+        cin >> exp;
+        p1.addToTail(coeff, exp);
+    }
+
+    cout << endl;
+
+    Polynomial<int> p2;
+    int num_val2;
+    cout << "Enter the number of terms for the 2nd polynomial: ";
+    cin >> num_val2;
+
+    for (int i = 0; i < num_val2; i++)
+    {
+        int coeff, exp;
+        cout << "Enter coefficient for term " << i + 1 << ": ";
+        cin >> coeff;
+        cout << "Enter exponent for term " << i + 1 << ": ";
+        cin >> exp;
+        p2.addToTail(coeff, exp);
+    }
+
+    Polynomial<int> p3 = p1.addition(p2);
+
+    cout << endl;
+    p3.display();
+
+    return 0;
+}

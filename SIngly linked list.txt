@@ -1,0 +1,150 @@
+#include <iostream>
+using namespace std;
+
+// Node class to represent each node in the linked list
+template <typename T>
+class Node {
+public:
+    T data;
+    Node* next;
+
+    Node(T value) : data(value), next(nullptr) {}
+};
+
+// SinglyLinkedList class as an ADT
+template <typename T>
+class SinglyLinkedList {
+private:
+    Node<T>* head;
+
+public:
+    SinglyLinkedList() : head(nullptr) {}
+
+    // Function to insert an element at the beginning of the list
+    void insertAtBeginning(T value) {
+        Node<T>* newNode = new Node<T>(value);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // Function to insert an element at ith position in the list
+    void insertAtPosition(T value, int position) {
+        if (position < 0) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        Node<T>* newNode = new Node<T>(value);
+
+        if (position == 0) {
+            newNode->next = head;
+            head = newNode;
+            return;
+        }
+
+        Node<T>* current = head;
+        for (int i = 0; i < position - 1 && current != nullptr; ++i) {
+            current = current->next;
+        }
+
+        if (current == nullptr) {
+            cout << "Invalid position\n";
+            delete newNode;
+            return;
+        }
+
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+
+    // Function to remove an element from the beginning of the list
+    void removeFromBeginning() {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node<T>* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    // Function to remove an element from ith position in the list
+    void removeFromPosition(int position) {
+        if (position < 0 || head == nullptr) {
+            cout << "Invalid position or list is empty\n";
+            return;
+        }
+
+        if (position == 0) {
+            Node<T>* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+
+        Node<T>* current = head;
+        for (int i = 0; i < position - 1 && current->next != nullptr; ++i) {
+            current = current->next;
+        }
+
+        if (current->next == nullptr) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        Node<T>* temp = current->next;
+        current->next = current->next->next;
+        delete temp;
+    }
+
+    // Function to search for an element in the list and return its pointer
+    Node<T>* search(T value) {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            if (current->data == value) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr; // Element not found
+    }
+
+    // Function to display the elements of the list
+    void display() {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    SinglyLinkedList<int> myList;
+
+    myList.insertAtBeginning(3);
+    myList.insertAtBeginning(2);
+    myList.insertAtBeginning(1);
+
+    myList.display(); 
+
+    myList.insertAtPosition(4, 1);
+    myList.display(); 
+
+    myList.removeFromBeginning();
+    myList.display(); 
+
+    myList.removeFromPosition(1);
+    myList.display(); 
+
+    Node<int>* searchResult = myList.search(3);
+    if (searchResult != nullptr) {
+        cout << "Element 3 found at address: " << searchResult << endl;
+    } else {
+        cout << "Element 3 not found\n";
+    }
+
+    return 0;
+}

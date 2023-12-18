@@ -1,0 +1,90 @@
+#include <iostream>
+using namespace std;
+
+class CircularQueue {
+    int* arr;
+    int front;
+    int rear;
+    int capacity;
+
+public:
+    CircularQueue(int n) {
+        arr = new int[n];
+        front = -1;
+        rear = -1;
+        capacity = n;
+    }
+
+    bool isFull() {
+        return (front == (rear + 1) % capacity);
+    }
+
+    bool isEmpty() {
+        return (front == -1 && rear == -1);
+    }
+
+    void enqueue(int x) {
+        if (isFull()) {
+            cout << "Queue overflow" << endl;
+            return;
+        }
+
+        if (isEmpty()) {
+            front = rear = 0;
+        } else {
+            rear = (rear + 1) % capacity;
+        }
+
+        arr[rear] = x;
+    }
+
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "Empty queue" << endl;
+            return;
+        }
+
+        if (front == rear) {
+            // Reset front and rear when there's only one element in the queue
+            front = rear = -1;
+        } else {
+            front = (front + 1) % capacity;
+        }
+    }
+
+    int peek() {
+        if (isEmpty()) {
+            cout << "Empty queue" << endl;
+            return -1; // Returning a default value; you may want to handle this differently based on your use case.
+        }
+
+        return arr[front];
+    }
+
+    ~CircularQueue() {
+        delete[] arr; // Don't forget to free the memory in the destructor
+    }
+};
+
+int main() {
+    CircularQueue cq(4);
+
+    cq.enqueue(1);
+    cq.enqueue(2);
+    cq.enqueue(3);
+    cq.enqueue(4);
+
+    cout << "Front element: " << cq.peek() << endl;
+
+    cq.dequeue();
+    cout << "After dequeue, front element: " << cq.peek() << endl;
+
+    cq.dequeue();
+    cout << "After dequeue, front element: " << cq.peek() << endl;
+
+    cq.enqueue(5);
+    cq.enqueue(6);
+    cout << "After enqueuing 5 and 6, front element: " << cq.peek() << endl;
+
+    return 0;
+}
